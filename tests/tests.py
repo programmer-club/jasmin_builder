@@ -3,7 +3,10 @@ import subprocess
 import shlex
 
 from jasmin_builder.builder import Builder
+from jasmin_builder.field import Field
+from jasmin_builder.klass import Class
 from jasmin_builder.method import *
+from jasmin_builder.modifiers import *
 from jasmin_builder.types import VOID, Link, Array
 
 
@@ -26,6 +29,8 @@ class JasminBuilderTests(unittest.TestCase):
 
         proc.stdout.close()
         proc.stderr.close()
+
+        self.assertEqual(proc.returncode, 0, "Exit code of testing Jasmin")
 
     def testEmptyMethod(self):
         m = Method("main", [], [MOD_PUBLIC, MOD_STATIC])
@@ -50,6 +55,24 @@ class JasminBuilderTests(unittest.TestCase):
 \tinvokevirtual 'java/io/PrintStream/println(Ljava/lang/String;)V'
 \treturn 
 .end method""")
+
+    def testClass(self):
+        c = Class("HelloWorld", ACC_PUBLIC)
+        # c.add_field(Field("str", Link("java.lang.String")))
+        m = Method("main", [Array(Link("java.lang.String"))], [MOD_PUBLIC, MOD_STATIC], VOID, 4)
+        b = Builder(m)
+        b.getstatic("java/lang/System/out", Link("java.io.PrintStream"))
+        # b.aload_0()
+        b.ldc("Hello, world!")
+        # b.putfield("HelloWorld/str", Link("java.lang.String"))
+        # b.aload_0()
+        # b.getfield("HelloWorld/str", Link("java.lang.String"))
+        b.invokevirtual("java/io/PrintStream/println(Ljava/lang/String;)V")
+        b.return_()
+
+        c.add_method(m)
+
+        c.to_file()
 
 
 if __name__ == '__main__':
