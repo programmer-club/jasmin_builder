@@ -54,6 +54,10 @@ class Method:
         assert mod in MODIFIER_LIST, "Invalid modifier: " + mod
         self.modifiers.append(mod)
 
+    def insert_instructon(self, instr, label=""):
+        instr.label = label
+        self.instructions.append(instr)
+
     def format_args(self):
         return ""
 
@@ -61,4 +65,5 @@ class Method:
         return f".method {' '.join(self.modifiers)} {self.name}({self.format_args()})V\n" + \
                (f"\t.limit stack {self.stack_limit}\n" if self.stack_limit != -1 else '') + \
                (f"\t.limit locals {self.locals_limit}\n" if self.locals_limit != -1 else '') + \
+               "".join([str(instr) for instr in self.instructions]) + \
                ".end method"

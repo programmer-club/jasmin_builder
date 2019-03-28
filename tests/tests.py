@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import shlex
 
+from jasmin_builder.builder import Builder
 from jasmin_builder.method import *
 
 
@@ -32,6 +33,22 @@ class JasminBuilderTests(unittest.TestCase):
     def testInvalidModifier(self):
         with self.assertRaises(AssertionError):
             m = Method("main", ["not-a-modifier"])
+
+    def testBasicInstr(self):
+        m = Method("main", [MOD_PUBLIC, MOD_STATIC], 4)
+        b = Builder(m)
+        b.getstatic("java/lang/System/out", "Ljava/io/PrintStream;")
+        b.ldc("Hello, world!")
+        b.invokevirtual("java/io/PrintStream/println(Ljava/lang/String;)V")
+        b.return_()
+
+        self.assertEqual(str(m), """.method public static main()V
+	.limit stack 4
+	getstatic 'java/lang/System/out' 'Ljava/io/PrintStream;'
+	ldc 'Hello, world!'
+	invokevirtual 'java/io/PrintStream/println(Ljava/lang/String;)V'
+	return 
+.end method""")
 
 
 if __name__ == '__main__':
