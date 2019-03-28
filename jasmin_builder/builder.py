@@ -581,23 +581,23 @@ class Builder:
     def invokeinterface(self, method: str, args: int, label=''):
         self.insert_instruction(Instruction("invokeinterface", method, args), label)
 
-    def getfield(self, field: str, type_: str, label=''):
-        self.insert_instruction(Instruction("getfield", field, type_), label)
+    def getfield(self, field: str, type_, label=''):
+        self.insert_instruction(Instruction("getfield", field, str(type_)), label)
 
-    def getstatic(self, field: str, type_: str, label=''):
-        self.insert_instruction(Instruction("getstatic", field, type_), label)
+    def getstatic(self, field: str, type_, label=''):
+        self.insert_instruction(Instruction("getstatic", field, str(type_)), label)
 
-    def putfield(self, field: str, type_: str, label=''):
-        self.insert_instruction(Instruction("putfield", field, type_), label)
+    def putfield(self, field: str, type_, label=''):
+        self.insert_instruction(Instruction("putfield", field, str(type_)), label)
 
-    def putstatic(self, field: str, type_: str, label=''):
-        self.insert_instruction(Instruction("putstatic", field, type_), label)
+    def putstatic(self, field: str, type_, label=''):
+        self.insert_instruction(Instruction("putstatic", field, str(type_)), label)
 
-    def newarray(self, type_: str, label=''):
-        self.insert_instruction(Instruction("newarray", type_), label)
+    def newarray(self, type_, label=''):
+        self.insert_instruction(Instruction("newarray", str(type_)), label)
 
-    def multianewarray(self, type_: str, dimensions: int, label=''):
-        self.insert_instruction(Instruction("multianewarray", type_, dimensions), label)
+    def multianewarray(self, type_, dimensions: int, label=''):
+        self.insert_instruction(Instruction("multianewarray", str(type_), dimensions), label)
 
     def ldc(self, constant, label=''):
         self.insert_instruction(Instruction("ldc", constant), label)

@@ -40,15 +40,19 @@ class Method:
     args = []
     stack_limit = -1
     locals_limit = -1
+    cls = None
+    ret = ''
 
-    def __init__(self, name: str, modifiers: List[str], stack_limit: int = -1, locals_limit: int = -1):
+    def __init__(self, name: str, args: List, modifiers: List[str], return_: str = "V", stack_limit: int = -1, locals_limit: int = -1):
         self.name = name
+        self.args = args
         self.modifiers = modifiers
         for i in self.modifiers:
             assert i in MODIFIER_LIST, "Invalid modifier: " + i
         self.stack_limit = stack_limit
         self.locals_limit = locals_limit
         self.instructions = []
+        self.ret = return_
 
     def add_modifier(self, mod: str):
         assert mod in MODIFIER_LIST, "Invalid modifier: " + mod
@@ -59,10 +63,10 @@ class Method:
         self.instructions.append(instr)
 
     def format_args(self):
-        return ""
+        return "".join(map(str, self.args))
 
     def __str__(self):
-        return f".method {' '.join(self.modifiers)} {self.name}({self.format_args()})V\n" + \
+        return f".method {' '.join(self.modifiers)} {self.name}({self.format_args()}){self.ret}\n" + \
                (f"\t.limit stack {self.stack_limit}\n" if self.stack_limit != -1 else '') + \
                (f"\t.limit locals {self.locals_limit}\n" if self.locals_limit != -1 else '') + \
                "".join([str(instr) for instr in self.instructions]) + \
