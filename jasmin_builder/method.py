@@ -43,7 +43,8 @@ class Method:
     cls = None
     ret = ''
 
-    def __init__(self, name: str, args: List, modifiers: List[str], return_: str = "V", stack_limit: int = -1, locals_limit: int = -1):
+    def __init__(self, name: str, args: List, modifiers: List[str], return_: str = "V", stack_limit: int = -1,
+                 locals_limit: int = -1):
         self.name = name
         self.args = args
         self.modifiers = modifiers

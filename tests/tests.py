@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import shlex
+import sys
 
 from jasmin_builder.builder import Builder
 from jasmin_builder.field import Field
@@ -19,18 +20,23 @@ def run_jasmin_command(cmd: str = '', pipe: bool = False):
 
 
 class JasminBuilderTests(unittest.TestCase):
-    def testJasminRuns(self):
-        proc = run_jasmin_command('', True)
+    def compile(self, klass: Class = None, quiet=True):
+        proc = run_jasmin_command('' if klass is None else klass.name + '.j', True)
 
         while not (proc.poll(), proc.returncode is not None)[1]:
             pass
 
-        # print('\n'.join(map(lambda x: x.decode('utf-8'), proc.communicate())))
+        if not quiet:
+            sys.stderr.write(proc.stderr.read().decode('utf-8'))
+            sys.stdout.write(proc.stdout.read().decode('utf-8'))
 
         proc.stdout.close()
         proc.stderr.close()
 
-        self.assertEqual(proc.returncode, 0, "Exit code of testing Jasmin")
+        return proc.returncode
+
+    def testJasminRuns(self):
+        self.assertEqual(self.compile(), 255, "Exit code of testing Jasmin")
 
     def testEmptyMethod(self):
         m = Method("main", [], [MOD_PUBLIC, MOD_STATIC])
@@ -50,9 +56,9 @@ class JasminBuilderTests(unittest.TestCase):
 
         self.assertEqual(str(m), """.method public static main([Ljava/lang/String;)V
 \t.limit stack 4
-\tgetstatic 'java/lang/System/out' 'Ljava/io/PrintStream;'
-\tldc 'Hello, world!'
-\tinvokevirtual 'java/io/PrintStream/println(Ljava/lang/String;)V'
+\tgetstatic "java/lang/System/out" "Ljava/io/PrintStream;"
+\tldc "Hello, world!"
+\tinvokevirtual "java/io/PrintStream/println(Ljava/lang/String;)V"
 \treturn 
 .end method""")
 
@@ -73,6 +79,8 @@ class JasminBuilderTests(unittest.TestCase):
         c.add_method(m)
 
         c.to_file()
+
+        self.assertEqual(self.compile(c, False), 0)
 
 
 if __name__ == '__main__':
